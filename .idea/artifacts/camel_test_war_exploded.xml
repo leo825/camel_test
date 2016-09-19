@@ -71,7 +71,7 @@
         </element>
       </element>
       <element id="directory" name="META-INF">
-        <element id="file-copy" path="E:\WorkSpace\IDEA_WorkSpace\camel_test\target/MANIFEST.MF" />
+        <element id="file-copy" path="E:\WorkSpace\Git\camel_test\target/MANIFEST.MF" />
       </element>
       <element id="javaee-facet-resources" facet="camel_test/web/Web" />
     </root>

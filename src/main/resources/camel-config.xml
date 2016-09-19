@@ -23,7 +23,7 @@
          http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd">
 
 
-    <bean id="ProcessorTest" class="com.leo.camel.ProcessorTest"/>
+    <bean id="ProcessorTest" class="com.leo.camel.processor.ProcessorTest"/>
 
     <camelContext xmlns="http://camel.apache.org/schema/spring">
 
