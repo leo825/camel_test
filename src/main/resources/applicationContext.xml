@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--suppress SpringIncorrectResourceTypeInspection, UnparsedCustomBeanInspection -->
+<beans xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:mvc="http://www.springframework.org/schema/mvc"
+       xmlns:tx="http://www.springframework.org/schema/tx"
+       xmlns="http://www.springframework.org/schema/beans"
+       xmlns:camel="http://camel.apache.org/schema/spring"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans.xsd
+        http://www.springframework.org/schema/tx
+        http://www.springframework.org/schema/tx/spring-tx-3.0.xsd
+        http://www.springframework.org/schema/context
+        http://www.springframework.org/schema/context/spring-context.xsd http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc.xsd
+        http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd">
+
+
+    <bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+        <property name="systemPropertiesModeName" value="SYSTEM_PROPERTIES_MODE_OVERRIDE"/>
+        <property name="ignoreResourceNotFound" value="true"/>
+        <property name="locations">
+            <list>
+                <!-- 标准配置 -->
+                <value>classpath:application.properties</value>
+                <value>classpath:log4j.properties</value>
+            </list>
+        </property>
+    </bean>
+
+    <!-- 打开Spring的Annotation支持 -->
+    <context:annotation-config/>
+    <!-- 扫描包 -->
+    <context:component-scan base-package="com.leo.*"/>
+
+    <!-- don't handle the static resource -->
+    <mvc:default-servlet-handler/>
+
+    <!-- if you use annotation you must configure following setting -->
+    <mvc:annotation-driven>
+        <mvc:message-converters register-defaults="true">
+            <bean class="org.springframework.http.converter.json.MappingJackson2HttpMessageConverter"/>
+        </mvc:message-converters>
+    </mvc:annotation-driven>
+    <!-- 可通过注解控制事务 -->
+    <tx:annotation-driven/>
+
+    <!-- 配置数据库 -->
+    <bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource">
+        <property name="driverClassName" value="${jdbc.driverClassName}"></property>
+        <property name="url" value="${jdbc.url}"></property>
+        <property name="username" value="${jdbc.username}"/>
+        <property name="password" value="${jdbc.password}"/>
+        <property name="maxActive" value="${jdbc.maxActive}"/>
+        <property name="maxIdle" value="${jdbc.maxIdle}"/>
+        <property name="minIdle" value="${jdbc.minIdle}"/>
+        <property name="maxWait" value="${jdbc.maxWait}"/>
+    </bean>
+
+
+    <!-- (事务管理)transaction manager, use JtaTransactionManager for global tx -->
+    <bean id="transactionManager"
+          class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+        <property name="dataSource" ref="dataSource"/>
+    </bean>
+
+
+    <!-- 配置jdbcTemplate -->
+    <bean id="jdbcTemplate" class="org.springframework.jdbc.core.JdbcTemplate">
+        <property name="dataSource" ref="dataSource"/>
+    </bean>
+
+
+    <bean id="ProcessorTest" class="com.leo.camel.ProcessorTest"/>
+
+    <!--<camelContext xmlns="http://camel.apache.org/schema/spring">-->
+
+        <!--<route id="helloRoute1">-->
+            <!--<from uri="jetty:http://0.0.0.0:9080/myservice"/>-->
+            <!--<process ref="ProcessorTest"/>-->
+            <!--<to uri="jetty:http://localhost:8080/camel_test/camel/camelService"/>-->
+        <!--</route>-->
+    <!--</camelContext>-->
+
+
+    <camelContext id="camelContext" xmlns="http://camel.apache.org/schema/spring">
+        <route id="helloRoute3">
+            <from uri="servlet:///camelS"/>
+            <process ref="ProcessorTest"/>
+            <to uri="http://localhost:8080/camel_test/camel/camelService"/>
+        </route>
+
+        <route id="helloRoute4">
+            <from uri="servlet:///camelC"/>
+            <process ref="ProcessorTest"/>
+            <to uri="http://localhost:8080/camel_test/camel/camelClient"/>
+        </route>
+
+        <route id="helloRoute5">
+            <from uri="direct:start"/>
+            <to uri="http://localhost:8080/camel_test/camel/camelClient"/>
+        </route>
+    </camelContext>
+</beans>
