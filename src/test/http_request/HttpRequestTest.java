@@ -23,12 +23,12 @@ public class HttpRequestTest {
 
     @Test
     public void getRequestTest() throws IOException {
-        getRequestByGet("http://localhost:8080/camel_test/camel/5?username=lisi&password=1234");
+        getRequestByGet("http://127.0.0.1:7070/3/camle_test/camel/camelService?username=lisi&password=1234");
     }
 
     @Test
     public void postRequestTest() throws IOException {
-        getRequestByPost("http://localhost:8080/camel_test/camel/5", "username=lisi&password=1234");
+        String result = getRequestByPost("http://127.0.0.1:7070/3/camle_test/camel/camelService", "username=lisi&password=1234");
     }
 
     public static String getRequestByPost(String url, String params) throws IOException {
