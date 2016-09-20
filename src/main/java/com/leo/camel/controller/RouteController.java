@@ -45,17 +45,22 @@ public class RouteController {
                     public void configure() throws Exception {
                         from("servlet:///" + finalI)
                                 .process(new Processor() {
-                                    @Override
-                                    public void process(Exchange exchange) throws Exception {
+                                             @Override
+                                             public void process(Exchange exchange) {
+                                                 try {
+                                                     HttpServletRequest request = exchange.getIn().getBody(HttpServletRequest.class);
+                                                     String str = exchange.getIn().getBody(String.class);
+                                                     System.out.println(request.getQueryString());
+                                                     System.out.println(str);
+                                                     //exchange.getOut().setHeader(Exchange.HTTP_QUERY, constant(request.getQueryString()));
+                                                     exchange.getOut().setBody(request.getQueryString());
+                                                 } catch (Exception e) {
+                                                     e.printStackTrace();
+                                                 }
+                                             }
+                                         }
 
-                                        HttpServletRequest request = exchange.getIn().getBody(HttpServletRequest.class);
-                                        System.out.println(request.getQueryString());
-                                        System.out.println(exchange.getContext().toString());
-                                        //exchange.getOut().setHeader(Exchange.HTTP_QUERY, constant(request.getQueryString()));
-                                        exchange.getOut().setBody(request.getQueryString());
-                                    }
-                                })
-                                .to("http://localhost:8080/camel_test/camel/camelService");
+                                ).to("http://localhost:8080/camel_test/camel/camelService");
                     }
                 };
                 camelContext.addRoutes(route);

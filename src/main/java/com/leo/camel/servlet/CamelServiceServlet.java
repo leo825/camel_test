@@ -13,11 +13,13 @@ import java.io.IOException;
 @WebServlet(name = "camelService", urlPatterns = "/camel/camelService")
 public class CamelServiceServlet extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        System.out.println("这是post请求。。。");
         doGet(request, response);
     }
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
+        System.out.println("这是get请求");
         String username = request.getParameter("username");
         String password = request.getParameter("password");
 

@@ -72,14 +72,14 @@
 
     <bean id="ProcessorTest" class="com.leo.camel.processor.ProcessorTest"/>
 
-    <!--<camelContext xmlns="http://camel.apache.org/schema/spring">-->
+    <camelContext xmlns="http://camel.apache.org/schema/spring">
 
-        <!--<route id="helloRoute1">-->
-            <!--<from uri="jetty:http://0.0.0.0:9080/myservice"/>-->
-            <!--<process ref="ProcessorTest"/>-->
-            <!--<to uri="jetty:http://localhost:8080/camel_test/camel/camelService"/>-->
-        <!--</route>-->
-    <!--</camelContext>-->
+        <route id="helloRoute1">
+            <from uri="jetty:http://0.0.0.0:9080/myservice"/>
+            <process ref="ProcessorTest"/>
+            <to uri="jetty:http://localhost:8080/camel_test/camel/camelService"/>
+        </route>
+    </camelContext>
 
 
     <camelContext id="camelContext" xmlns="http://camel.apache.org/schema/spring">
