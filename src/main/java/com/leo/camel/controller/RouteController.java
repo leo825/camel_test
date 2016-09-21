@@ -37,6 +37,8 @@ public class RouteController {
 
     @PostConstruct
     public void init() {
+
+        String testUrl = "http://192.168.0.101/PGIS_S_TileMapServer/Maps/vec_tj/EzMap";
         try {
             for (int i = 0; i < 10; i++) {
 
@@ -52,15 +54,15 @@ public class RouteController {
                                                      String str = exchange.getIn().getBody(String.class);
                                                      System.out.println(request.getQueryString());
                                                      System.out.println(str);
-                                                     //exchange.getOut().setHeader(Exchange.HTTP_QUERY, constant(request.getQueryString()));
-                                                     exchange.getOut().setBody(request.getQueryString());
+                                                     exchange.getOut().setHeader(Exchange.HTTP_QUERY, constant(request.getQueryString()));
+                                                     //exchange.getOut().setBody(request.getQueryString());
                                                  } catch (Exception e) {
                                                      e.printStackTrace();
                                                  }
                                              }
                                          }
 
-                                ).to("http://localhost:8080/camel_test/camel/camelService");
+                                ).to("http://192.168.0.101/PGIS_S_TileMapServer/Maps/vec_tj/EzMap");
                     }
                 };
                 camelContext.addRoutes(route);
