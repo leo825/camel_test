@@ -33,13 +33,11 @@ import java.util.Arrays;
 public class JettyHttp {
 
     static String jettyHost = "0.0.0.0";
-    static String jettyPort = "9090";
+    static String jettyPort = "8081";
 
     static String[] appServerNames = {"app1", "app2", "app3"};
 
     static String[] mapAppServerNames = {"PGIS_S_TileMapServer", "PGIS_S_TileMapServer2"};
-
-
 
 
     public static void main(String args[]) throws Exception {
@@ -67,7 +65,6 @@ public class JettyHttp {
                                     public void process(Exchange exchange) throws Exception {
 
                                         HttpServletRequest request = exchange.getIn(HttpMessage.class).getRequest();
-
                                         /**
                                          * 举例子：
                                          * getRequestURI: /app1/PGIS_S_TileMapServer/Maps/vec_tj/EzMap
