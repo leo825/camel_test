@@ -6,6 +6,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.io.OutputStream;
 import javax.annotation.Resource;
 
 
@@ -23,10 +24,15 @@ public class CamleClientServlet extends HttpServlet {
         String username = request.getParameter("username");
         String password = request.getParameter("password");
 
-        System.out.println("用户名:" + username + ", 密码:" + password);
-        response.getWriter().write("用户名:" + username + ", 密码:" + password);
-        response.getWriter().flush();
-        response.getWriter().close();
+        String data = "用户名:" + username + ", 密码:" + password;
+        System.out.println(data);
+//        response.getWriter().write("用户名:" + username + ", 密码:" + password);
+//        response.getWriter().flush();
+//        response.getWriter().close();
+
+        OutputStream out = response.getOutputStream();
+        //out.write(data.getBytes());
+        out.write(data.getBytes("UTF-8"));
 
     }
 }

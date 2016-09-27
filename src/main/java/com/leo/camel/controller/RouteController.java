@@ -12,6 +12,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.commons.io.IOUtils;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -22,6 +23,13 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import static org.apache.camel.builder.Builder.constant;
+
+import net.sf.json.JSONObject;
+import net.sf.json.xml.XMLSerializer;
+
+import java.io.ByteArrayOutputStream;
+import java.io.InputStream;
+
 
 /**
  * Created by Administrator on 2016/9/19.
@@ -56,13 +64,23 @@ public class RouteController {
                                                      System.out.println(str);
                                                      exchange.getOut().setHeader(Exchange.HTTP_QUERY, constant(request.getQueryString()));
                                                      //exchange.getOut().setBody(request.getQueryString());
+
                                                  } catch (Exception e) {
                                                      e.printStackTrace();
                                                  }
                                              }
                                          }
-
-                                ).to("http://192.168.0.101/PGIS_S_TileMapServer/Maps/vec_tj/EzMap");
+                                ).to("http://localhost:8080/camel_test/camel/camelService").process(new Processor() {
+                            /**
+                             * 这个方法可以查看是否有数据返回
+                             */
+                            @Override
+                            public void process(Exchange exchange) throws Exception {
+                                InputStream inputStream = (InputStream) exchange.getIn().getBody();
+                                String data = IOUtils.toString(inputStream);
+                                exchange.getOut().setBody("最终数据: " + data);
+                            }
+                        });
                     }
                 };
                 camelContext.addRoutes(route);
@@ -87,6 +105,16 @@ public class RouteController {
         });
     }
 
+
+    public String xml2Json(String xml) {
+        return new XMLSerializer().read(xml).toString();
+    }
+
+    public String json2Xml(String json) {
+        JSONObject jobj = JSONObject.fromObject(json);
+        String xml = new XMLSerializer().write(jobj);
+        return xml;
+    }
 }
 
 

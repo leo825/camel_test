@@ -28,7 +28,7 @@ public class HttpRequestTest {
 
     @Test
     public void postRequestTest() throws IOException {
-        String result = getRequestByPost("http://127.0.0.1:7070/app1/camel/camelService", "username=lisi&password=1234");
+        String result = getRequestByPost("http://localhost:8080/HGIS_TL_FWZX/server/postTest", "username=lisi&password=1234");
     }
 
     public static String getRequestByPost(String url, String params) throws IOException {
