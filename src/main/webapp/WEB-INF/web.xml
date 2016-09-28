@@ -44,14 +44,10 @@
         <servlet-class>org.apache.camel.component.servlet.CamelHttpTransportServlet</servlet-class>
         <load-on-startup>1</load-on-startup>
     </servlet>
-
-    <!-- Camel servlet mapping -->
     <servlet-mapping>
         <servlet-name>CamelServlet</servlet-name>
         <url-pattern>/camel/*</url-pattern>
     </servlet-mapping>
-
-
 
 
     <!--配置DispatcherServlet-->
@@ -68,5 +64,23 @@
     <listener>
         <listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
     </listener>
+
+    <servlet>
+        <servlet-name>camelService</servlet-name>
+        <servlet-class>com.leo.camel.servlet.CamelServiceServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>camelService</servlet-name>
+        <url-pattern>/camel/camelService</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>camelClient</servlet-name>
+        <servlet-class>com.leo.camel.servlet.CamleClientServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>camelClient</servlet-name>
+        <url-pattern>/camel/camelClient</url-pattern>
+    </servlet-mapping>
 
 </web-app>

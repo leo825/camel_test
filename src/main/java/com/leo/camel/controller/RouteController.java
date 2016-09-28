@@ -10,25 +10,23 @@ package com.leo.camel.controller;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
-import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.http.HttpMessage;
 import org.apache.commons.io.IOUtils;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import static org.apache.camel.builder.Builder.constant;
 
-import net.sf.json.JSONObject;
-import net.sf.json.xml.XMLSerializer;
-
-import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
+
+
 
 
 /**
@@ -54,33 +52,9 @@ public class RouteController {
                 RouteBuilder route = new RouteBuilder() {
                     public void configure() throws Exception {
                         from("servlet:///" + finalI)
-                                .process(new Processor() {
-                                             @Override
-                                             public void process(Exchange exchange) {
-                                                 try {
-                                                     HttpServletRequest request = exchange.getIn().getBody(HttpServletRequest.class);
-                                                     String str = exchange.getIn().getBody(String.class);
-                                                     System.out.println(request.getQueryString());
-                                                     System.out.println(str);
-                                                     exchange.getOut().setHeader(Exchange.HTTP_QUERY, constant(request.getQueryString()));
-                                                     //exchange.getOut().setBody(request.getQueryString());
-
-                                                 } catch (Exception e) {
-                                                     e.printStackTrace();
-                                                 }
-                                             }
-                                         }
-                                ).to("http://localhost:8080/camel_test/camel/camelService").process(new Processor() {
-                            /**
-                             * 这个方法可以查看是否有数据返回
-                             */
-                            @Override
-                            public void process(Exchange exchange) throws Exception {
-                                InputStream inputStream = (InputStream) exchange.getIn().getBody();
-                                String data = IOUtils.toString(inputStream);
-                                exchange.getOut().setBody("最终数据: " + data);
-                            }
-                        });
+                                .process(new ProcessBegin())
+                                .to("http://localhost:8080/camel_test/camel/camelService")
+                                .process(new ProcessEnd());
                     }
                 };
                 camelContext.addRoutes(route);
@@ -90,30 +64,47 @@ public class RouteController {
         }
     }
 
-    @RequestMapping(value = "/route", method = {RequestMethod.GET, RequestMethod.POST})
-    public void getRoute(HttpServletRequest request, HttpServletResponse response) {
 
-        System.out.println("2222222222223");
-
-        ProducerTemplate pt = camelContext.createProducerTemplate();
-
-
-        pt.send("direct:5", new Processor() {
-            public void process(Exchange exchange) throws Exception {
-                exchange.getIn().setHeader(Exchange.HTTP_QUERY, constant(request.getQueryString()));
+    /**
+     * 开始的processor处理
+     */
+    private class ProcessBegin implements Processor {
+        @Override
+        public void process(Exchange exchange) {
+            String params = null;
+            try {
+                HttpServletRequest request = exchange.getIn(HttpMessage.class).getRequest();
+                if ("GET".equals(request.getMethod())) {
+                    params = request.getQueryString();
+                    exchange.getOut().setHeader(Exchange.HTTP_QUERY, constant(params));
+                } else {
+                    params = exchange.getIn().getBody(String.class);
+                    exchange.getOut().setHeader(Exchange.HTTP_METHOD, constant("POST"));
+                    exchange.getOut().setHeader(Exchange.HTTP_QUERY, constant(params));
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
             }
-        });
+        }
     }
 
 
-    public String xml2Json(String xml) {
-        return new XMLSerializer().read(xml).toString();
-    }
+    /**
+     * 结束的processor处理
+     */
+    private class ProcessEnd implements Processor {
+        @Override
+        public void process(Exchange exchange) {
 
-    public String json2Xml(String json) {
-        JSONObject jobj = JSONObject.fromObject(json);
-        String xml = new XMLSerializer().write(jobj);
-        return xml;
+            InputStream inputStream = null;
+            try {
+                inputStream = (InputStream) exchange.getIn().getBody();
+                byte[] bytes = IOUtils.toByteArray(inputStream);
+                exchange.getOut().setBody(bytes);
+            } catch (Exception e) {
+                System.out.println(e.getMessage());
+            }
+        }
     }
 }
 

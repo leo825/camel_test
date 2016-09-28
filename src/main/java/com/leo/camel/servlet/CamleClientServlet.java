@@ -1,7 +1,6 @@
 package com.leo.camel.servlet;
 
 import javax.servlet.ServletException;
-import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -13,7 +12,6 @@ import javax.annotation.Resource;
 /**
  * Created by Administrator on 2016/9/12.
  */
-@WebServlet(name = "camelClient", urlPatterns = "/camel/camelClient")
 public class CamleClientServlet extends HttpServlet {
 
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -26,13 +24,10 @@ public class CamleClientServlet extends HttpServlet {
 
         String data = "用户名:" + username + ", 密码:" + password;
         System.out.println(data);
-//        response.getWriter().write("用户名:" + username + ", 密码:" + password);
-//        response.getWriter().flush();
-//        response.getWriter().close();
+        response.getWriter().write("用户名:" + username + ", 密码:" + password);
+        response.getWriter().flush();
+        response.getWriter().close();
 
-        OutputStream out = response.getOutputStream();
-        //out.write(data.getBytes());
-        out.write(data.getBytes("UTF-8"));
 
     }
 }
