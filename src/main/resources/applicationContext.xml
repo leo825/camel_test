@@ -70,12 +70,24 @@
     </bean>
 
 
+    <!--<bean id="jetty" class="org.apache.camel.component.jetty.JettyHttpComponent">-->
+    <!--<property name="socketConnectors">-->
+    <!--<map>-->
+    <!--<entry key="9090">-->
+    <!--<bean class="org.eclipse.jetty.server.nio.SelectChannelConnector">-->
+    <!--<property name="forwarded" value="true"/>-->
+    <!--</bean>-->
+    <!--</entry>-->
+    <!--</map>-->
+    <!--</property>-->
+    <!--</bean>-->
+
     <bean id="ProcessorTest" class="com.leo.camel.processor.ProcessorTest"/>
 
     <camelContext xmlns="http://camel.apache.org/schema/spring">
 
         <route id="helloRoute1">
-            <from uri="jetty:http://0.0.0.0:9080/myservice"/>
+            <from uri="jetty:http://0.0.0.0:8081/myservice"/>
             <process ref="ProcessorTest"/>
             <to uri="jetty:http://localhost:8080/camel_test/camel/camelService"/>
         </route>
