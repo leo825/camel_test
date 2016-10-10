@@ -83,4 +83,13 @@
         <url-pattern>/camel/camelClient</url-pattern>
     </servlet-mapping>
 
+    <servlet>
+        <servlet-name>dataTest</servlet-name>
+        <servlet-class>com.leo.camel.servlet.DataTestServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>dataTest</servlet-name>
+        <url-pattern>/camel/dataTest</url-pattern>
+    </servlet-mapping>
+
 </web-app>

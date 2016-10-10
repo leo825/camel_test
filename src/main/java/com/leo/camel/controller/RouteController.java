@@ -10,11 +10,13 @@ package com.leo.camel.controller;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
+import org.apache.camel.Route;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.http.HttpMessage;
 import org.apache.commons.io.IOUtils;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
@@ -24,9 +26,10 @@ import javax.servlet.http.HttpServletResponse;
 
 import static org.apache.camel.builder.Builder.constant;
 
+import java.io.IOException;
 import java.io.InputStream;
-
-
+import java.io.PrintWriter;
+import java.util.List;
 
 
 /**
@@ -36,7 +39,6 @@ import java.io.InputStream;
 @Controller
 @RequestMapping("/http")
 public class RouteController {
-
 
     @Resource
     private CamelContext camelContext;
@@ -106,6 +108,37 @@ public class RouteController {
             }
         }
     }
+
+
+    @RequestMapping(value = "/getRouteSize", method = {RequestMethod.GET, RequestMethod.POST})
+    public void getRouteSize(HttpServletRequest request, HttpServletResponse response) throws Exception {
+
+
+        String result1 = "route开始的长度：" + camelContext.getRoutes().size();
+
+        List<Route> routeList = camelContext.getRoutes();
+
+        for (Route route : routeList) {
+            if ("Endpoint[servlet:///0]".equals(route.getEndpoint().toString())) {
+                System.out.println("找到了");
+                System.out.println("------------" + route.getId() + "," + route.getEndpoint().toString());
+                camelContext.stopRoute(route.getId());
+                camelContext.removeRoute(route.getId());
+            }
+        }
+
+
+        String result2 = "route删除节点后的长度：" + camelContext.getRoutes().size();
+
+
+        System.out.println(result1 + "," + result2);
+
+        PrintWriter out = response.getWriter();
+        out.write(result1 + "," + result2);
+        out.flush();
+        out.close();
+    }
+
 }
 
 

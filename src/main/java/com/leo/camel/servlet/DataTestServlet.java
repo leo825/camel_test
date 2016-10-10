@@ -1,40 +1,44 @@
 /**
  * Created with IntelliJ IDEA.
  * User: Administrator
- * Date: 2016/9/19
- * Time: 15:34
+ * Date: 2016/10/8
+ * Time: 14:29
  * To change this template use File | Settings | File Templates.
  */
-package http_request;
+package com.leo.camel.servlet;
 
-import org.junit.Test;
-
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.net.URLEncoder;
 
 /**
- * Created by Administrator on 2016/9/19.
+ * Created by Administrator on 2016/10/8.
  */
-public class HttpRequestTest {
+public class DataTestServlet extends HttpServlet {
 
-    @Test
-    public void getRequestTest() throws IOException {
-//        getRequestByGet("http://127.0.0.1:7070/3/camle_test/camel/camelService?username=lisi&password=1234");
-
-        String data = getRequestByGet("http://192.168.0.90:2087/90/wfs?VERSION=1.1.0&SERVICE=WFS&BODY=<?xml version=\"1.0\"?><GetFeature><Query typeName=\"CS_BGFD_PT\"><Filter><PropertyIsLike><PropertyName>MC</PropertyName><Literal>天津%25</Literal></PropertyIsLike></Filter></Query></GetFeature>");
-        System.out.println(data);
+    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        doGet(request, response);
     }
 
-    @Test
-    public void postRequestTest() throws IOException {
+    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String data = getRequestByPost("http://192.168.0.90:2087/90/wfs", "VERSION=1.1.0&SERVICE=WFS&BODY=<?xml version=\"1.0\"?><GetFeature><Query typeName=\"CS_BGFD_PT\"><Filter><PropertyIsLike><PropertyName>MC</PropertyName><Literal>天津%25</Literal></PropertyIsLike></Filter></Query></GetFeature>");
         System.out.println(data);
+        System.out.println("hello world=========================121");
+        response.setHeader("Content-type", "text/html;charset=GBK");
+        response.getWriter().write(data);
+        response.getWriter().flush();
+        response.getWriter().close();
+
+
     }
+
 
     public static String getRequestByPost(String url, String params) throws IOException {
         URL u = new URL(url);
@@ -56,23 +60,4 @@ public class HttpRequestTest {
         rd.close();
         return data.toString();
     }
-
-
-    public static String getRequestByGet(String url) throws IOException {
-        URL u = new URL(url);
-        HttpURLConnection conn = (HttpURLConnection) u.openConnection();
-        conn.setRequestMethod("GET");
-        conn.setDoOutput(false);
-        conn.setDoInput(true);
-
-        StringBuffer data = new StringBuffer();
-        BufferedReader rd = new BufferedReader(new InputStreamReader(conn.getInputStream(), "GBK"));
-        String line;
-        while ((line = rd.readLine()) != null) {
-            data.append(line);
-        }
-        rd.close();
-        return data.toString();
-    }
-
 }
