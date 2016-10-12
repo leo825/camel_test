@@ -76,6 +76,9 @@ public class RouteController {
             String params = null;
             try {
                 HttpServletRequest request = exchange.getIn(HttpMessage.class).getRequest();
+
+                System.out.println("获取到的参数：" + request.getParameter("username"));
+
                 if ("GET".equals(request.getMethod())) {
                     params = request.getQueryString();
                     exchange.getOut().setHeader(Exchange.HTTP_QUERY, constant(params));
